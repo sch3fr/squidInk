@@ -1,9 +1,8 @@
 import requests
 import json
 import os
+from datetime import datetime
 
-GITHUB_TOKEN = "" # Cant commit this with my token
-GITHUB_USERNAME = ""
 
 GRAPHQL_QUERY = """
 query($userName:String!) {
@@ -41,7 +40,13 @@ def fetch_github_contributions(username, token):
         
         contributions_data = data.get('data', {}).get('user', {}).get('contributionsCollection', {}).get('contributionCalendar', {})
 
-        return contributions_data
+        total_contributions = contributions_data.get('totalContributions')
+        weeks_data = contributions_data.get('weeks', [])
+
+        return {
+            'total': total_contributions,
+            'commits': weeks_data
+        }
 
     except requests.exceptions.RequestException as e:
         print(f"Error calling the Github API: {e}")
@@ -54,15 +59,15 @@ if __name__ == "__main__":
     if contributions:
         print("\nData succesfully loaded:")
         # debug print, ignore
-        #print(json.dumps(contributions, indent=2))
+        # print(json.dumps(contributions, indent=2))
 
         # Access total contributions
-        total_contributions = contributions.get('totalContributions')
-        print(f"Total contributions: {total_contributions}")
+        total_contributions = contributions.get('total')
+        weeks = contributions.get('commits', [])
 
-        # Access weeks and days
-        weeks = contributions.get('weeks', [])
+        print(f"Total contributions: {total_contributions}")
         print(f"Number of valid weeks: {len(weeks)}")
+
         if weeks:
             # print this week
             print("\nThis week:")
@@ -71,3 +76,5 @@ if __name__ == "__main__":
 
     else:
         print("Could not load contribuition data.")
+
+def calculate_github_stats()
