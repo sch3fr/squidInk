@@ -87,10 +87,12 @@ def calculate_github_stats(all_days_raw):
                 current_streak_actual += 1
             else:
                 current_streak_actual = 0
+                break
 
     return{
         'longest_streak': longest_streak,
         'current_strak': current_streak_actual,
+        'current_strek': current_streak_actual,
         'max_contributions': max_contributions,
         'average_contributions': average_contributions
     }
