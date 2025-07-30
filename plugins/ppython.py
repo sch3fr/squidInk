@@ -56,7 +56,44 @@ def fetch_github_contributions(username, token):
     
 def calculate_github_stats(all_days_raw):
     sorted_days = sorted(all_days_raw, key=lambda day: datetime.strptime(day['date'], '%Y-%m-%d'))
-    pass
+
+    max_contributions = 0
+    if sorted_days:
+        contributions_count = [day['contributionCount'] for day in sorted_days]
+        max_contributions = max(contributions_count)
+
+    average_contributions = 0.0
+    if sorted_days:
+        total_sum = sum(day['contributionCount'] for day in sorted_days)
+        average_contributions = round(total_sum / len(sorted_days), 2)
+
+    longest_streak = 0
+    current_streak_longest = 0
+    if sorted_days:
+        longest = 0
+        current = 0
+        for day in sorted_days:
+            if day['contributionCount']>0:
+                current += 1
+                longest = max(longest, current)
+            else:
+                current = 0
+        longest_streak = longest
+
+    current_streak_actual = 0
+    if sorted_days:
+        for day in reversed(sorted_days):
+            if day['contributionCount'] > 0:
+                current_streak_actual += 1
+            else:
+                current_streak_actual = 0
+
+    return{
+        'longest_streak': longest_streak,
+        'current_strak': current_streak_actual,
+        'max_contributions': max_contributions,
+        'average_contributions': average_contributions
+    }
 
 
 
@@ -87,6 +124,7 @@ if __name__ == "__main__":
             all_contribution_days.extend(week.get('contributionDays', []))
 
         stats = calculate_github_stats(all_contribution_days)
+        print(stats)
 
     else:
         print("Could not load contribuition data.")
