@@ -3,6 +3,8 @@ import json
 import os
 from datetime import datetime
 
+GITHUB_TOKEN = "censored :)" # Cant commit this with my token
+GITHUB_USERNAME = "censored :)"
 
 GRAPHQL_QUERY = """
 query($userName:String!) {
@@ -51,6 +53,12 @@ def fetch_github_contributions(username, token):
     except requests.exceptions.RequestException as e:
         print(f"Error calling the Github API: {e}")
         return None
+    
+def calculate_github_stats(all_days_raw):
+    sorted_days = sorted(all_days_raw, key=lambda day: datetime.strptime(day['date'], '%Y-%m-%d'))
+    pass
+
+
 
 if __name__ == "__main__":
     print("Loading GitHub data...")
@@ -73,8 +81,13 @@ if __name__ == "__main__":
             print("\nThis week:")
             for day in weeks[0].get('contributionDays', []):
                 print(f"  Date: {day['date']}, Contributions: {day['contributionCount']}")
+        
+        all_contribution_days = []
+        for week in weeks:
+            all_contribution_days.extend(week.get('contributionDays', []))
+
+        stats = calculate_github_stats(all_contribution_days)
 
     else:
         print("Could not load contribuition data.")
 
-def calculate_github_stats()
